@@ -1,0 +1,42 @@
+# Built output
+*.apk
+*.aar
+*.aab
+*.ap_
+*.dex
+*.class
+
+# Gradle
+.gradle/
+build/
+out/
+**/build/
+
+# Kotlin
+.kotlin/
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+captures/
+local.properties
+
+# Android SDK generated files
+gen/
+bin/
+proguard/
+release/
+
+# Logs & temp
+*.log
+.DS_Store
+Thumbs.db
+
+# Keystores / signing
+*.jks
+*.keystore
+
+# Version control helpers
+*.orig

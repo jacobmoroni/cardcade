@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Adaptive launcher foreground for Cardcade: a fanned hand of four playing
+  cards showing the four suit glyphs. Viewport is 108dp; content stays inside
+  the 72dp safe rectangle around the center.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <group android:pivotX="54" android:pivotY="92" android:rotation="-36">
+        <path android:fillColor="#FFFFFF" android:pathData="M44,36 H64 Q68,36 68,40 V82 Q68,86 64,86 H44 Q40,86 40,82 V40 Q40,36 44,36 Z" />
+        <path android:strokeColor="#0B6A3A" android:strokeWidth="1.2" android:fillColor="#00000000" android:pathData="M44,36 H64 Q68,36 68,40 V82 Q68,86 64,86 H44 Q40,86 40,82 V40 Q40,36 44,36 Z" />
+        <path android:fillColor="#111111" android:pathData="M54,50 L48,58 C45,62 46,67 50,67 C52,67 53,66 54,64 C55,66 56,67 58,67 C62,67 63,62 60,58 Z M54,67 L51,72 H57 Z" />
+    </group>
+
+    <group android:pivotX="54" android:pivotY="92" android:rotation="-12">
+        <path android:fillColor="#FFFFFF" android:pathData="M44,32 H64 Q68,32 68,36 V78 Q68,82 64,82 H44 Q40,82 40,78 V36 Q40,32 44,32 Z" />
+        <path android:strokeColor="#0B6A3A" android:strokeWidth="1.2" android:fillColor="#00000000" android:pathData="M44,32 H64 Q68,32 68,36 V78 Q68,82 64,82 H44 Q40,82 40,78 V36 Q40,32 44,32 Z" />
+        <path android:fillColor="#B91C1C" android:pathData="M54,48 L64,62 L54,76 L44,62 Z" />
+    </group>
+
+    <group android:pivotX="54" android:pivotY="92" android:rotation="12">
+        <path android:fillColor="#FFFFFF" android:pathData="M44,32 H64 Q68,32 68,36 V78 Q68,82 64,82 H44 Q40,82 40,78 V36 Q40,32 44,32 Z" />
+        <path android:strokeColor="#0B6A3A" android:strokeWidth="1.2" android:fillColor="#00000000" android:pathData="M44,32 H64 Q68,32 68,36 V78 Q68,82 64,82 H44 Q40,82 40,78 V36 Q40,32 44,32 Z" />
+        <path android:fillColor="#B91C1C" android:pathData="M54,76 C52,73 43,67 43,58 C43,52 48,48 52,51 C53,52 54,53 54,55 C54,53 55,52 56,51 C60,48 65,52 65,58 C65,67 56,73 54,76 Z" />
+    </group>
+
+    <group android:pivotX="54" android:pivotY="92" android:rotation="36">
+        <path android:fillColor="#FFFFFF" android:pathData="M44,36 H64 Q68,36 68,40 V82 Q68,86 64,86 H44 Q40,86 40,82 V40 Q40,36 44,36 Z" />
+        <path android:strokeColor="#0B6A3A" android:strokeWidth="1.2" android:fillColor="#00000000" android:pathData="M44,36 H64 Q68,36 68,40 V82 Q68,86 64,86 H44 Q40,86 40,82 V40 Q40,36 44,36 Z" />
+        <path android:fillColor="#111111" android:pathData="M54,50 C52,53 43,59 43,66 C43,72 48,74 52,71 C53,70 54,69 54,67 C54,69 55,70 56,71 C60,74 65,72 65,66 C65,59 56,53 54,50 Z M54,71 L51,77 H57 Z" />
+    </group>
+</vector>
