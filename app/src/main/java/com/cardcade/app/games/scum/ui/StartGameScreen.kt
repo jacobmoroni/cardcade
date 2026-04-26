@@ -34,6 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.cardcade.app.games.scum.game.AIDifficulty
 import com.cardcade.app.games.scum.game.SeriesConfig
 import com.cardcade.app.games.scum.game.SeriesFormat
 import com.cardcade.app.games.scum.game.SessionMode
@@ -57,6 +58,7 @@ fun StartGameScreen(
     var jokersUnswappable by remember { mutableStateOf(stored.jokersUnswappable) }
     var jokerBeatsAll by remember { mutableStateOf(stored.jokerBeatsAll) }
     var extraSuits by remember { mutableStateOf(stored.extraSuits) }
+    var aiDifficulty by remember { mutableStateOf(stored.aiDifficulty) }
     var seriesFormat by remember { mutableStateOf(stored.seriesConfig.format) }
     var targetScore by remember { mutableStateOf(stored.seriesConfig.targetScore) }
     var fixedRounds by remember { mutableStateOf(stored.seriesConfig.fixedRounds) }
@@ -118,6 +120,17 @@ fun StartGameScreen(
                         selected = humanCount,
                         label = { it.toString() },
                         onSelect = { humanCount = it },
+                    )
+                }
+            }
+
+            if (mode == SessionMode.AI_FILL) {
+                OptionSection("AI difficulty") {
+                    SegmentedOption(
+                        values = listOf(AIDifficulty.EASY, AIDifficulty.MEDIUM),
+                        selected = aiDifficulty,
+                        label = { if (it == AIDifficulty.EASY) "Easy" else "Medium" },
+                        onSelect = { aiDifficulty = it },
                     )
                 }
             }
@@ -233,6 +246,7 @@ fun StartGameScreen(
                             targetScore = targetScore,
                             fixedRounds = fixedRounds,
                         ),
+                        aiDifficulty = aiDifficulty,
                     )
                     UserPreferences.setSetupOptions(context, opts)
                     onStart(opts)

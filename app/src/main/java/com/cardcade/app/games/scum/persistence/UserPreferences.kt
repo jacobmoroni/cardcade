@@ -1,6 +1,7 @@
 package com.cardcade.app.games.scum.persistence
 
 import android.content.Context
+import com.cardcade.app.games.scum.game.AIDifficulty
 import com.cardcade.app.games.scum.game.SeriesConfig
 import com.cardcade.app.games.scum.game.SeriesFormat
 import com.cardcade.app.games.scum.game.SessionMode
@@ -23,6 +24,7 @@ object UserPreferences {
     private const val KEY_TARGET_SCORE = "target_score"
     private const val KEY_FIXED_ROUNDS = "fixed_rounds"
     private const val KEY_RAPID_PLAY = "rapid_play"
+    private const val KEY_AI_DIFFICULTY = "ai_difficulty"
 
     private fun prefs(context: Context) =
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
@@ -56,6 +58,9 @@ object UserPreferences {
                 targetScore = p.getInt(KEY_TARGET_SCORE, defaults.seriesConfig.targetScore),
                 fixedRounds = p.getInt(KEY_FIXED_ROUNDS, defaults.seriesConfig.fixedRounds),
             ),
+            aiDifficulty = AIDifficulty.valueOf(
+                p.getString(KEY_AI_DIFFICULTY, defaults.aiDifficulty.name) ?: defaults.aiDifficulty.name,
+            ),
         )
     }
 
@@ -73,6 +78,7 @@ object UserPreferences {
             .putString(KEY_SERIES_FORMAT, opts.seriesConfig.format.name)
             .putInt(KEY_TARGET_SCORE, opts.seriesConfig.targetScore)
             .putInt(KEY_FIXED_ROUNDS, opts.seriesConfig.fixedRounds)
+            .putString(KEY_AI_DIFFICULTY, opts.aiDifficulty.name)
             .apply()
     }
 }

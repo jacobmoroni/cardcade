@@ -3,6 +3,8 @@ package com.cardcade.app.games.scum.game
 /** How a single device hosts the players. */
 enum class SessionMode { PASS_AND_PLAY, AI_FILL }
 
+enum class AIDifficulty { EASY, MEDIUM }
+
 enum class SeriesFormat { TARGET_SCORE, FIXED_ROUNDS }
 
 data class SeriesConfig(
@@ -28,6 +30,7 @@ data class SetupOptions(
     val jokerBeatsAll: Boolean = false,
     val extraSuits: Int = 0,
     val seriesConfig: SeriesConfig = SeriesConfig(),
+    val aiDifficulty: AIDifficulty = AIDifficulty.EASY,
 ) {
     val totalCards: Int get() = 52 + extraSuits * 13 + jokerCount
 

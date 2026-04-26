@@ -206,7 +206,7 @@ class GameViewModel(app: Application) : AndroidViewModel(app) {
             delay(aiPlayDelay())
             val latest = _ui.value.gameState ?: return@launch
             if (latest.currentSeat != seat || latest.phase != Phase.PLAYING) return@launch
-            val decision = AIPlayer.decide(latest, opts.jokerBeatsAll)
+            val decision = AIPlayer.decide(latest, opts.jokerBeatsAll, opts.aiDifficulty)
             val next = when (decision) {
                 is AIDecision.Play -> GameEngine.play(latest, seat, decision.cards, opts.jokerBeatsAll)
                 AIDecision.Pass -> GameEngine.pass(latest, seat)
