@@ -45,6 +45,7 @@ import com.cardcade.app.games.scum.persistence.UserPreferences
 fun StartGameScreen(
     onBack: () -> Unit,
     onStart: (SetupOptions) -> Unit,
+    onOpenLobby: (SetupOptions) -> Unit = {},
 ) {
     val context = LocalContext.current
     val stored = remember { UserPreferences.getSetupOptions(context) }
@@ -107,9 +108,15 @@ fun StartGameScreen(
 
             OptionSection("Session") {
                 SegmentedOption(
-                    values = listOf(SessionMode.AI_FILL, SessionMode.PASS_AND_PLAY),
+                    values = listOf(SessionMode.AI_FILL, SessionMode.PASS_AND_PLAY, SessionMode.ONLINE_LAN),
                     selected = mode,
-                    label = { if (it == SessionMode.AI_FILL) "You + AI" else "Pass & play" },
+                    label = {
+                        when (it) {
+                            SessionMode.AI_FILL -> "You + AI"
+                            SessionMode.PASS_AND_PLAY -> "Pass & play"
+                            SessionMode.ONLINE_LAN -> "LAN"
+                        }
+                    },
                     onSelect = { mode = it },
                 )
             }
@@ -124,12 +131,16 @@ fun StartGameScreen(
                 }
             }
 
-            if (mode == SessionMode.AI_FILL) {
+            if (mode == SessionMode.AI_FILL || mode == SessionMode.ONLINE_LAN) {
                 OptionSection("AI difficulty") {
                     SegmentedOption(
-                        values = listOf(AIDifficulty.EASY, AIDifficulty.MEDIUM),
+                        values = listOf(AIDifficulty.EASY, AIDifficulty.MEDIUM, AIDifficulty.HARD),
                         selected = aiDifficulty,
-                        label = { if (it == AIDifficulty.EASY) "Easy" else "Medium" },
+                        label = { when (it) {
+                            AIDifficulty.EASY -> "Easy"
+                            AIDifficulty.MEDIUM -> "Medium"
+                            AIDifficulty.HARD -> "Hard"
+                        } },
                         onSelect = { aiDifficulty = it },
                     )
                 }
@@ -249,7 +260,11 @@ fun StartGameScreen(
                         aiDifficulty = aiDifficulty,
                     )
                     UserPreferences.setSetupOptions(context, opts)
-                    onStart(opts)
+                    if (mode == SessionMode.ONLINE_LAN) {
+                        onOpenLobby(opts)
+                    } else {
+                        onStart(opts)
+                    }
                 },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
                 colors = ButtonDefaults.buttonColors(

@@ -40,7 +40,7 @@ object GameEngine {
         SessionMode.PASS_AND_PLAY -> (0 until opts.totalPlayers).map {
             Player(id = it, name = "Player ${it + 1}", isHuman = true)
         }
-        SessionMode.AI_FILL -> (0 until opts.totalPlayers).mapIndexed { i, _ ->
+        SessionMode.AI_FILL, SessionMode.ONLINE_LAN -> (0 until opts.totalPlayers).mapIndexed { i, _ ->
             Player(
                 id = i,
                 name = if (i < opts.humanCount) "You" else "CPU ${i - opts.humanCount + 1}",
@@ -247,6 +247,7 @@ object GameEngine {
             trickLeader = nextLeader,
             currentSeat = nextLeader,
             log = state.log + msg,
+            playedCards = state.playedCards + state.pile.cards,
         )
     }
 
@@ -332,6 +333,7 @@ object GameEngine {
             pendingTrades = trades,
             completedTrades = emptyList(),
             previousRoles = newRoles,
+            playedCards = emptyList(),
         )
     }
 

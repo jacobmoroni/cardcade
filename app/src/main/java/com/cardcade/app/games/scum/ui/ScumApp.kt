@@ -9,6 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.cardcade.app.games.scum.game.SetupOptions
 import com.cardcade.app.games.scum.persistence.GameSnapshotStore
 
 /**
@@ -20,6 +21,7 @@ fun ScumApp(onExit: () -> Unit) {
     val vm: GameViewModel = viewModel()
     val context = LocalContext.current
     var screen by remember { mutableStateOf(Screen.MENU) }
+    var pendingOpts by remember { mutableStateOf<SetupOptions?>(null) }
     var hasSavedGame by remember { mutableStateOf(GameSnapshotStore.hasSnapshot(context)) }
 
     LaunchedEffect(screen) {
@@ -30,6 +32,7 @@ fun ScumApp(onExit: () -> Unit) {
         when (screen) {
             Screen.MENU -> onExit()
             Screen.START -> screen = Screen.MENU
+            Screen.LOBBY -> screen = Screen.START
             Screen.GAME -> { /* ignore — users exit via the menu button */ }
         }
     }
@@ -58,6 +61,22 @@ fun ScumApp(onExit: () -> Unit) {
                 vm.startGame(opts)
                 screen = Screen.GAME
             },
+            onOpenLobby = { opts ->
+                pendingOpts = opts
+                screen = Screen.LOBBY
+            },
+        )
+        Screen.LOBBY -> LanLobbyScreen(
+            setup = pendingOpts ?: run { screen = Screen.START; return },
+            onBack = { screen = Screen.START },
+            onStartAsHost = { gameOpts, session, seatMap, playerNames ->
+                vm.startLanGame(gameOpts, session, seatMap, playerNames)
+                screen = Screen.GAME
+            },
+            onStartAsClient = { session, mySeat, opts ->
+                vm.joinLanGame(session, mySeat, opts)
+                screen = Screen.GAME
+            },
         )
         Screen.GAME -> GameScreen(
             vm = vm,
@@ -69,4 +88,4 @@ fun ScumApp(onExit: () -> Unit) {
     }
 }
 
-private enum class Screen { MENU, START, GAME }
+private enum class Screen { MENU, START, LOBBY, GAME }

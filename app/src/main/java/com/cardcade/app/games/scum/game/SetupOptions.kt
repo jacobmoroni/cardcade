@@ -1,9 +1,14 @@
 package com.cardcade.app.games.scum.game
 
 /** How a single device hosts the players. */
-enum class SessionMode { PASS_AND_PLAY, AI_FILL }
+enum class SessionMode {
+    PASS_AND_PLAY,
+    AI_FILL,
+    /** Multiple devices on the same LAN; may be backfilled with CPUs. */
+    ONLINE_LAN,
+}
 
-enum class AIDifficulty { EASY, MEDIUM }
+enum class AIDifficulty { EASY, MEDIUM, HARD }
 
 enum class SeriesFormat { TARGET_SCORE, FIXED_ROUNDS }
 

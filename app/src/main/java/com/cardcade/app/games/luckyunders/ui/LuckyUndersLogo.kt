@@ -50,11 +50,11 @@ fun LuckyUndersLogo(
             val cardCount = 4
             val cardGap = w * 0.025f
             val cardW = (w * 0.84f - cardGap * (cardCount - 1)) / cardCount
-            val cardH = h * 0.50f
+            val cardH = cardW * 1.4f   // standard playing-card aspect ratio
             val cardRadius = CornerRadius(cardW * 0.18f)
             val totalCardsW = cardW * cardCount + cardGap * (cardCount - 1)
             val leftX = (w - totalCardsW) / 2f
-            val cardRowTop = h * 0.48f
+            val cardRowTop = h * 0.65f  // lower so clover crowns the upper third
 
             fun cardX(i: Int) = leftX + i * (cardW + cardGap)
 

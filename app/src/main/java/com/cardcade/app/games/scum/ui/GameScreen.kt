@@ -59,10 +59,8 @@ fun GameScreen(
     val options = ui.options
     if (state == null || options == null) return
 
-    // Who is the viewer of this device? In pass-and-play everyone takes turns
-    // on the one screen (so the local seat is whoever's up); in AI-fill mode
-    // the viewer is always the first human seat and never sees AI hands.
-    val localSeat = localPlayerSeat(state, options)
+    // Who is the viewer of this device?
+    val localSeat = localPlayerSeat(state, options, ui.mySeat)
 
     Box(
         modifier = Modifier
@@ -98,9 +96,15 @@ fun GameScreen(
             )
         }
 
+        val isLanClient = options.mode == SessionMode.ONLINE_LAN && ui.mySeat != 0
         when (state.phase) {
             Phase.TRADING -> TradingOverlay(state = state, vm = vm)
-            Phase.ROUND_END -> RoundEndOverlay(state = state, options = options, onNext = vm::startNextRound)
+            Phase.ROUND_END -> RoundEndOverlay(
+                state = state,
+                options = options,
+                isLanClient = isLanClient,
+                onNext = vm::startNextRound,
+            )
             Phase.MATCH_END -> MatchEndOverlay(state = state, onExit = onExitToMenu, onReplay = {
                 vm.clearGame()
                 onExitToMenu()
@@ -157,10 +161,12 @@ private fun HeaderBar(
     }
 }
 
-private fun localPlayerSeat(state: GameState, options: SetupOptions): Int = when (options.mode) {
-    SessionMode.PASS_AND_PLAY -> state.currentSeat
-    SessionMode.AI_FILL -> state.players.indexOfFirst { it.isHuman }.coerceAtLeast(0)
-}
+private fun localPlayerSeat(state: GameState, options: SetupOptions, mySeat: Int): Int =
+    when (options.mode) {
+        SessionMode.PASS_AND_PLAY -> state.currentSeat
+        SessionMode.AI_FILL -> state.players.indexOfFirst { it.isHuman }.coerceAtLeast(0)
+        SessionMode.ONLINE_LAN -> mySeat
+    }
 
 /** 1-based finish place ("1st", "2nd", "3rd", "4th", …). */
 private fun ordinal(place: Int): String {
@@ -361,10 +367,27 @@ private fun HandAndActions(
     val legalPlays = if (isMyTurn) {
         GameEngine.legalPlays(hand, state.pile, options.jokerBeatsAll)
     } else emptyList()
-    val playableCards = legalPlays.flatten().toSet()
 
+    // A card is playable when leading (all cards can start a trick) or when following
+    // and there are enough copies of that rank in hand to fill the required set size.
+    val playableCards: Set<Card> = when {
+        !isMyTurn -> emptySet()
+        state.pile.setSize == 0 -> hand.toSet()
+        else -> {
+            val countByRank = hand.groupingBy { it.rank }.eachCount()
+            hand.filter { card ->
+                if (card.isJoker && options.jokerBeatsAll) true
+                else card.rank > state.pile.topRank &&
+                    (countByRank[card.rank] ?: 0) >= state.pile.setSize
+            }.toSet()
+        }
+    }
+
+    // Legal when all selected cards share a rank and there's a legal play of that rank+count.
     val sameRank = selected.isNotEmpty() && selected.map(Card::rank).distinct().size == 1
-    val selectionIsLegal = sameRank && legalPlays.any { it.toSet() == selected.toSet() }
+    val selectionIsLegal = sameRank && legalPlays.any {
+        it.size == selected.size && it.first().rank == selected.first().rank
+    }
 
     val stillInTrick = state.players.withIndex().count { !it.value.isOut && !it.value.passedThisTrick }
     val isSolo = isMyTurn && stillInTrick == 1 && state.pile.setSize > 0
@@ -398,7 +421,7 @@ private fun HandAndActions(
                 CardView(
                     card = card,
                     selected = card in selected,
-                    enabled = isMyTurn && card in playableCards,
+                    enabled = isMyTurn && (card in playableCards || card in selected),
                     onClick = { onToggle(card) },
                 )
             }
@@ -594,7 +617,12 @@ private fun TradingOverlay(state: GameState, vm: GameViewModel) {
 // ---- Round end & match end -------------------------------------------------------
 
 @Composable
-private fun RoundEndOverlay(state: GameState, options: SetupOptions, onNext: () -> Unit) {
+private fun RoundEndOverlay(
+    state: GameState,
+    options: SetupOptions,
+    isLanClient: Boolean = false,
+    onNext: () -> Unit,
+) {
     val n = options.totalPlayers
     // Cumulative totals haven't been applied to state yet — preview them so
     // players can see where everyone will sit going into the next round.
@@ -659,14 +687,22 @@ private fun RoundEndOverlay(state: GameState, options: SetupOptions, onNext: () 
                     }
 
                 Spacer(Modifier.height(6.dp))
-                Button(
-                    onClick = onNext,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFE6B54A),
-                        contentColor = Color.Black,
-                    ),
-                ) { Text("Next round", fontWeight = FontWeight.Bold) }
+                if (isLanClient) {
+                    Text(
+                        "Waiting for host to start next round…",
+                        color = Color(0xFFB9F5C9),
+                        fontSize = 13.sp,
+                    )
+                } else {
+                    Button(
+                        onClick = onNext,
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFE6B54A),
+                            contentColor = Color.Black,
+                        ),
+                    ) { Text("Next round", fontWeight = FontWeight.Bold) }
+                }
             }
         }
     }

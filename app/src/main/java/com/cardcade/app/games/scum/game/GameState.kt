@@ -60,4 +60,6 @@ data class GameState(
     val completedTrades: List<CompletedTrade>,
     /** Saved roles from the previous round so the board can label seats. */
     val previousRoles: List<Role>,
+    /** All cards from completed tricks this round — visible public information for card counting. */
+    val playedCards: List<Card> = emptyList(),
 )
